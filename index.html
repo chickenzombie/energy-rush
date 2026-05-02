@@ -1,0 +1,2585 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <title>Energy Rush</title>
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9889;</text></svg>"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Onest:wght@300..700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: inherit;
+            }
+            :root {
+                --bg: #07070f;
+                --card-bg: #11111c;
+                --border: #1e1e30;
+                --text: #e2e2f0;
+                --muted: #8888aa;
+                --accent: #6c63ff;
+            }
+            body {
+                background: var(--bg);
+                color: var(--text);
+                font-family: "Onest", system-ui, sans-serif;
+            }
+            .site-header {
+                background-color: var(--bg);
+                background-image:
+                    radial-gradient(
+                        ellipse 90% 70% at 50% -5%,
+                        rgba(108, 99, 255, 0.22) 0%,
+                        transparent 65%
+                    ),
+                    radial-gradient(
+                        rgba(108, 99, 255, 0.07) 1px,
+                        transparent 1px
+                    );
+                background-size:
+                    100% 100%,
+                    28px 28px;
+                border-bottom: 1px solid rgba(108, 99, 255, 0.25);
+                padding: 64px 20px 56px;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            }
+            .site-header::after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 320px;
+                height: 1px;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--accent),
+                    #ff6b9d,
+                    transparent
+                );
+                box-shadow: 0 0 18px rgba(108, 99, 255, 0.6);
+            }
+            .header-badge {
+                display: inline-block;
+                background: rgba(108, 99, 255, 0.12);
+                border: 1px solid rgba(108, 99, 255, 0.35);
+                color: #a89fff;
+                font-size: 0.72rem;
+                font-weight: 600;
+                letter-spacing: 2.5px;
+                text-transform: uppercase;
+                padding: 5px 16px;
+                border-radius: 20px;
+                margin-bottom: 22px;
+            }
+            .logo {
+                font-size: 4rem;
+                font-weight: 800;
+                background: linear-gradient(90deg, #6c63ff, #ff6b9d, #ffd700);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                letter-spacing: -2px;
+                line-height: 1.2;
+                padding-bottom: 6px;
+                filter: drop-shadow(0 0 28px rgba(108, 99, 255, 0.45));
+            }
+            .subtitle {
+                color: var(--muted);
+                margin-top: 12px;
+                font-size: 1rem;
+                letter-spacing: 0.4px;
+            }
+            .header-divider {
+                width: 56px;
+                height: 2px;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--accent),
+                    transparent
+                );
+                margin: 28px auto;
+                border-radius: 2px;
+            }
+            .header-stats {
+                display: flex;
+                gap: 32px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .header-stats span {
+                color: var(--muted);
+                font-size: 0.82rem;
+                letter-spacing: 0.3px;
+            }
+            .header-stats span b {
+                color: var(--text);
+                font-weight: 700;
+            }
+            .subtitle-unused {
+                color: var(--muted);
+                margin-top: 8px;
+            }
+            .controls {
+                max-width: 1200px;
+                margin: 40px auto 0;
+                padding: 0 20px;
+            }
+            .search-box {
+                width: 100%;
+                padding: 14px 20px;
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                color: var(--text);
+                font-size: 1rem;
+                outline: none;
+                transition: border-color 0.2s;
+                margin-bottom: 16px;
+            }
+            .search-box:focus {
+                border-color: var(--accent);
+            }
+            .search-box::placeholder {
+                color: var(--muted);
+                font-family: "Onest", system-ui, sans-serif;
+            }
+            .filter-row {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            .f-btn {
+                padding: 8px 18px;
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                background: transparent;
+                color: var(--muted);
+                font-size: 0.85rem;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .f-btn:hover,
+            .f-btn.active {
+                background: var(--accent);
+                border-color: var(--accent);
+                color: #fff;
+            }
+            .grid {
+                max-width: 1200px;
+                margin: 40px auto;
+                padding: 0 20px;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+                gap: 24px;
+            }
+            .card {
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                overflow: hidden;
+                transition:
+                    transform 0.3s,
+                    box-shadow 0.3s;
+                cursor: pointer;
+            }
+            .card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            }
+            .card.hidden {
+                display: none;
+            }
+            .c-head {
+                padding: 28px 24px;
+            }
+            .c-emoji {
+                font-size: 2.8rem;
+                display: block;
+                margin-bottom: 10px;
+            }
+            .c-name {
+                font-size: 1.45rem;
+                font-weight: 700;
+                color: #fff;
+            }
+            .c-brand {
+                font-size: 0.85rem;
+                opacity: 0.7;
+                margin-top: 3px;
+                color: #fff;
+            }
+            .c-meta {
+                display: flex;
+                gap: 6px;
+                margin-top: 10px;
+                flex-wrap: wrap;
+            }
+            .c-badge {
+                padding: 3px 9px;
+                border-radius: 10px;
+                font-size: 0.72rem;
+                background: rgba(255, 255, 255, 0.15);
+                color: #fff;
+            }
+            .c-body {
+                padding: 20px 24px;
+            }
+            .s-label {
+                font-size: 0.72rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: var(--muted);
+                margin-bottom: 10px;
+            }
+            .kbzhu {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                gap: 8px;
+                margin-bottom: 18px;
+            }
+            .kc {
+                background: #0a0a14;
+                border-radius: 10px;
+                padding: 10px 6px;
+                text-align: center;
+            }
+            .kc-val {
+                font-size: 1rem;
+                font-weight: 700;
+            }
+            .kc-name {
+                font-size: 0.68rem;
+                color: var(--muted);
+                margin-top: 2px;
+            }
+            .stats {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 18px;
+            }
+            .stat {
+                flex: 1;
+                background: #0a0a14;
+                border-radius: 10px;
+                padding: 10px 4px;
+                text-align: center;
+            }
+            .stat-icon {
+                font-size: 1.1rem;
+            }
+            .stat-val {
+                font-size: 0.9rem;
+                font-weight: 700;
+                display: block;
+                margin-top: 2px;
+            }
+            .stat-lbl {
+                font-size: 0.65rem;
+                color: var(--muted);
+            }
+            .card-tags {
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+                margin-bottom: 16px;
+            }
+            .c-tag {
+                padding: 3px 10px;
+                border-radius: 10px;
+                font-size: 0.72rem;
+                border: 1px solid;
+            }
+            .read-btn {
+                width: 100%;
+                padding: 12px;
+                border: none;
+                border-radius: 10px;
+                font-family: inherit;
+                font-size: 0.9rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition:
+                    opacity 0.2s,
+                    transform 0.1s;
+            }
+            .read-btn:hover {
+                opacity: 0.9;
+                box-shadow: 0 0 16px 3px currentColor;
+            }
+            .read-btn:active {
+                transform: scale(0.98);
+            }
+            .overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.85);
+                backdrop-filter: blur(8px);
+                z-index: 1000;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            .overlay.open {
+                display: flex;
+            }
+            .modal {
+                background: var(--card-bg);
+                border: 1px solid var(--border);
+                border-radius: 20px;
+                max-width: 700px;
+                width: 100%;
+                max-height: 90vh;
+                overflow-y: auto;
+                scrollbar-width: thin;
+            }
+            .m-head {
+                padding: 32px 32px 24px;
+                position: relative;
+                overflow: hidden;
+            }
+            .m-close {
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                background: rgba(255, 255, 255, 0.1);
+                color: #fff;
+                font-size: 1rem;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.2s;
+            }
+            .m-close:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+            .m-emoji {
+                font-size: 3.5rem;
+                display: block;
+                margin-bottom: 12px;
+            }
+            .m-title {
+                font-size: 2rem;
+                font-weight: 800;
+                color: #fff;
+            }
+            .m-brand {
+                color: rgba(255, 255, 255, 0.7);
+                margin-top: 4px;
+            }
+            .m-body {
+                padding: 0 32px 32px;
+            }
+            .m-section {
+                font-size: 0.78rem;
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                color: var(--muted);
+                margin: 24px 0 12px;
+            }
+            .m-kbzhu {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+            .mkc {
+                background: #0a0a14;
+                border-radius: 12px;
+                padding: 14px 10px;
+                text-align: center;
+            }
+            .mkc-val {
+                font-size: 1.3rem;
+                font-weight: 700;
+            }
+            .mkc-name {
+                font-size: 0.72rem;
+                color: var(--muted);
+                margin-top: 3px;
+            }
+            .nutr-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .nutr {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #0a0a14;
+                border-radius: 10px;
+                padding: 12px 16px;
+            }
+            .nutr-name {
+                color: var(--muted);
+                font-size: 0.88rem;
+            }
+            .nutr-val {
+                font-weight: 700;
+                font-size: 0.95rem;
+            }
+            .history {
+                color: var(--muted);
+                line-height: 1.75;
+                font-size: 0.95rem;
+            }
+            .history p {
+                margin-bottom: 14px;
+            }
+            .facts {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .fact {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                background: #0a0a14;
+                border-radius: 10px;
+                padding: 12px 16px;
+                font-size: 0.9rem;
+                color: var(--muted);
+            }
+            .fact-icon {
+                font-size: 1rem;
+                flex-shrink: 0;
+            }
+            ::-webkit-scrollbar {
+                width: 6px;
+            }
+            ::-webkit-scrollbar-track {
+                background: var(--bg);
+            }
+            ::-webkit-scrollbar-thumb {
+                background: #2a2a40;
+                border-radius: 3px;
+            }
+            .can-img-wrap {
+                text-align: center;
+                margin-bottom: 10px;
+                height: 140px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .can-img {
+                max-height: 140px;
+                max-width: 100%;
+                object-fit: contain;
+                filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+                transition: transform 0.3s;
+            }
+            .card:hover .can-img {
+                transform: scale(1.07) translateY(-4px);
+            }
+            .no-results {
+                grid-column: 1/-1;
+                text-align: center;
+                padding: 60px 20px;
+                color: var(--muted);
+            }
+            footer {
+                text-align: center;
+                padding: 40px 20px;
+                color: var(--muted);
+                font-size: 0.85rem;
+                border-top: 1px solid var(--border);
+                margin-top: 40px;
+            }
+            @media (max-width: 768px) {
+                .grid {
+                    grid-template-columns: repeat(
+                        auto-fill,
+                        minmax(280px, 1fr)
+                    );
+                    gap: 16px;
+                    padding: 0 16px;
+                    margin: 24px auto;
+                }
+                .controls {
+                    padding: 0 16px;
+                    margin-top: 24px;
+                }
+                .overlay {
+                    padding: 12px;
+                }
+                .m-head {
+                    padding: 24px 20px 16px;
+                }
+                .m-body {
+                    padding: 0 20px 24px;
+                }
+                .m-kbzhu {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .nutr-grid {
+                    grid-template-columns: 1fr;
+                }
+                .m-title {
+                    font-size: 1.6rem;
+                }
+            }
+            @media (max-width: 480px) {
+                .site-header {
+                    padding: 52px 16px 44px;
+                }
+                .logo {
+                    font-size: 2.6rem;
+                    letter-spacing: -1px;
+                }
+                .subtitle {
+                    font-size: 0.9rem;
+                }
+                .lang-switch {
+                    top: 12px;
+                    right: 12px;
+                }
+                .grid {
+                    grid-template-columns: 1fr;
+                    gap: 12px;
+                    padding: 0 12px;
+                }
+                .c-head {
+                    padding: 20px 18px;
+                }
+                .c-body {
+                    padding: 16px 18px;
+                }
+                .can-img-wrap {
+                    height: 120px;
+                }
+                .can-img {
+                    max-height: 120px;
+                }
+                .kbzhu {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .m-kbzhu {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .nutr-grid {
+                    grid-template-columns: 1fr;
+                }
+                .m-title {
+                    font-size: 1.3rem;
+                }
+                .f-btn {
+                    font-size: 0.78rem;
+                    padding: 6px 12px;
+                }
+                .search-box {
+                    padding: 12px 16px;
+                    font-size: 0.92rem;
+                }
+                .to-top {
+                    bottom: 18px;
+                    right: 14px;
+                    width: 40px;
+                    height: 40px;
+                    font-size: 1rem;
+                }
+                footer {
+                    padding: 24px 16px;
+                    font-size: 0.78rem;
+                }
+                .m-head {
+                    padding: 20px 16px 14px;
+                }
+                #m-img-wrap .can-img {
+                    max-height: 110px;
+                }
+                .m-body {
+                    padding: 0 16px 20px;
+                }
+                .m-close {
+                    top: 14px;
+                    right: 14px;
+                }
+            }
+            .to-top {
+                position: fixed;
+                bottom: 32px;
+                right: 32px;
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                background: var(--accent);
+                color: #fff;
+                border: none;
+                font-size: 1.2rem;
+                cursor: pointer;
+                opacity: 0;
+                transform: translateY(16px);
+                transition:
+                    opacity 0.3s,
+                    transform 0.3s;
+                z-index: 500;
+                box-shadow: 0 4px 20px rgba(108, 99, 255, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .to-top.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            .to-top:hover {
+                background: #7c74ff;
+                box-shadow: 0 4px 28px rgba(108, 99, 255, 0.7);
+            }
+            .lang-switch {
+                position: absolute;
+                top: 20px;
+                right: 24px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                border-radius: 20px;
+                padding: 4px;
+            }
+            .lang-btn {
+                background: none;
+                border: none;
+                color: var(--muted);
+                font-size: 0.78rem;
+                font-weight: 700;
+                letter-spacing: 1px;
+                cursor: pointer;
+                padding: 4px 10px;
+                border-radius: 14px;
+                transition: all 0.2s;
+            }
+            .lang-btn.active {
+                background: var(--accent);
+                color: #fff;
+            }
+            .lang-btn:hover:not(.active) {
+                color: var(--text);
+            }
+        </style>
+    </head>
+    <body>
+        <header class="site-header">
+            <div class="lang-switch">
+                <button
+                    class="lang-btn active"
+                    id="btnRu"
+                    onclick="setLang('ru')"
+                >
+                    RU
+                </button>
+                <button class="lang-btn" id="btnEn" onclick="setLang('en')">
+                    EN
+                </button>
+            </div>
+            <div class="logo">Energy Rush</div>
+            <p class="subtitle">Коллекция лучших энергетиков мира</p>
+        </header>
+        <div class="controls">
+            <input
+                type="text"
+                class="search-box"
+                id="searchInput"
+                placeholder="&#128269; Поиск энергетика..."
+            />
+            <div class="filter-row">
+                <button class="f-btn active" data-filter="all">Все</button>
+                <button class="f-btn" data-filter="classic">Классика</button>
+                <button class="f-btn" data-filter="high-caffeine">
+                    Высокий кофеин
+                </button>
+                <button class="f-btn" data-filter="fitness">Фитнес</button>
+                <button class="f-btn" data-filter="russia">Россия</button>
+                <button class="f-btn" data-filter="budget">Бюджет</button>
+            </div>
+        </div>
+        <div class="grid" id="cardsGrid">
+            <div
+                class="card"
+                data-id="redbull"
+                data-tags="classic"
+                onclick="openModal('redbull')"
+            >
+                <div
+                    class="c-head"
+                    style="
+                        background: linear-gradient(135deg, #003b7a, #001a40);
+                    "
+                >
+                    <div class="can-img-wrap">
+                        <img
+                            src="images/red_bull.png"
+                            alt="Red Bull"
+                            class="can-img"
+                            onerror="
+                                this.parentElement.innerHTML =
+                                    '<span class=c-emoji>&#128002;</span>'
+                            "
+                        />
+                    </div>
+                    <div class="c-name">Red Bull</div>
+                    <div class="c-brand">Red Bull GmbH</div>
+                    <div class="c-meta">
+                        <span class="c-badge">Австрия</span
+                        ><span class="c-badge">с 1987 г.</span
+                        ><span class="c-badge">250 мл</span>
+                    </div>
+                </div>
+                <div class="c-body">
+                    <div class="s-label">КБЖУ на 1 банку</div>
+                    <div class="kbzhu">
+                        <div class="kc">
+                            <div class="kc-val">112</div>
+                            <div class="kc-name">ккал</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0,4г</div>
+                            <div class="kc-name">белки</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">жиры</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">27г</div>
+                            <div class="kc-name">углев.</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-icon">&#9749;</span
+                            ><span class="stat-val" style="color: #ffe100"
+                                >80 мг</span
+                            ><span class="stat-lbl">кофеин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">&#9879;&#65039;</span
+                            ><span class="stat-val" style="color: #ffe100"
+                                >1000 мг</span
+                            ><span class="stat-lbl">таурин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">&#127852;</span
+                            ><span class="stat-val">27г</span
+                            ><span class="stat-lbl">сахар</span>
+                        </div>
+                    </div>
+                    <div class="card-tags">
+                        <span
+                            class="c-tag"
+                            style="color: #ffe100; border-color: #ffe10040"
+                            >классика</span
+                        >
+                        <span
+                            class="c-tag"
+                            style="color: #88aaff; border-color: #88aaff40"
+                            >витамины B</span
+                        >
+                    </div>
+                    <button
+                        class="read-btn"
+                        onclick="
+                            event.stopPropagation();
+                            openModal('redbull');
+                        "
+                        style="
+                            background: linear-gradient(
+                                90deg,
+                                #003b7a,
+                                #0055aa
+                            );
+                            color: #ffe100;
+                        "
+                    >
+                        Читать историю &#8594;
+                    </button>
+                </div>
+            </div>
+            <div
+                class="card"
+                data-id="monster"
+                data-tags="classic"
+                onclick="openModal('monster')"
+            >
+                <div
+                    class="c-head"
+                    style="
+                        background: linear-gradient(135deg, #0a1a0a, #001000);
+                    "
+                >
+                    <div class="can-img-wrap">
+                        <img
+                            src="images/monster-removebg-preview.png"
+                            alt="Monster Energy"
+                            class="can-img"
+                            onerror="
+                                this.parentElement.innerHTML =
+                                    '<span class=c-emoji>&#128126;</span>'
+                            "
+                        />
+                    </div>
+                    <div class="c-name">Monster Energy</div>
+                    <div class="c-brand">Monster Beverage Corporation</div>
+                    <div class="c-meta">
+                        <span class="c-badge">США</span
+                        ><span class="c-badge">с 2002 г.</span
+                        ><span class="c-badge">473 мл</span>
+                    </div>
+                </div>
+                <div class="c-body">
+                    <div class="s-label">КБЖУ на 1 банку</div>
+                    <div class="kbzhu">
+                        <div class="kc">
+                            <div class="kc-val">210</div>
+                            <div class="kc-name">ккал</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">белки</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">жиры</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">54г</div>
+                            <div class="kc-name">углев.</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-icon">&#9749;</span
+                            ><span class="stat-val" style="color: #00d100"
+                                >160 мг</span
+                            ><span class="stat-lbl">кофеин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">&#9879;&#65039;</span
+                            ><span class="stat-val" style="color: #00d100"
+                                >2000 мг</span
+                            ><span class="stat-lbl">таурин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">&#127852;</span
+                            ><span class="stat-val">54г</span
+                            ><span class="stat-lbl">сахар</span>
+                        </div>
+                    </div>
+                    <div class="card-tags">
+                        <span
+                            class="c-tag"
+                            style="color: #00d100; border-color: #00d10040"
+                            >классика</span
+                        >
+                        <span
+                            class="c-tag"
+                            style="color: #88aaff; border-color: #88aaff40"
+                            >большой объём</span
+                        >
+                    </div>
+                    <button
+                        class="read-btn"
+                        onclick="
+                            event.stopPropagation();
+                            openModal('monster');
+                        "
+                        style="
+                            background: linear-gradient(
+                                90deg,
+                                #0a1a0a,
+                                #003300
+                            );
+                            color: #00d100;
+                        "
+                    >
+                        Читать историю &#8594;
+                    </button>
+                </div>
+            </div>
+            <div
+                class="card"
+                data-id="rockstar"
+                data-tags="classic"
+                onclick="openModal('rockstar')"
+            >
+                <div
+                    class="c-head"
+                    style="
+                        background: linear-gradient(135deg, #1a1000, #0d0800);
+                    "
+                >
+                    <div class="can-img-wrap">
+                        <img
+                            src="images/rockstar.png"
+                            alt="Rockstar Energy"
+                            class="can-img"
+                            onerror="
+                                this.parentElement.innerHTML =
+                                    '<span class=c-emoji>&#11088;</span>'
+                            "
+                        />
+                    </div>
+                    <div class="c-name">Rockstar Energy</div>
+                    <div class="c-brand">Rockstar Inc. / PepsiCo</div>
+                    <div class="c-meta">
+                        <span class="c-badge">США</span
+                        ><span class="c-badge">с 2001 г.</span
+                        ><span class="c-badge">473 мл</span>
+                    </div>
+                </div>
+                <div class="c-body">
+                    <div class="s-label">КБЖУ на 1 банку</div>
+                    <div class="kbzhu">
+                        <div class="kc">
+                            <div class="kc-val">250</div>
+                            <div class="kc-name">ккал</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">белки</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">жиры</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">63г</div>
+                            <div class="kc-name">углев.</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-icon">&#9749;</span
+                            ><span class="stat-val" style="color: #ffd700"
+                                >160 мг</span
+                            ><span class="stat-lbl">кофеин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">&#9879;&#65039;</span
+                            ><span class="stat-val" style="color: #ffd700"
+                                >1000 мг</span
+                            ><span class="stat-lbl">таурин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">&#127852;</span
+                            ><span class="stat-val">62г</span
+                            ><span class="stat-lbl">сахар</span>
+                        </div>
+                    </div>
+                    <div class="card-tags">
+                        <span
+                            class="c-tag"
+                            style="color: #ffd700; border-color: #ffd70040"
+                            >классика</span
+                        >
+                        <span
+                            class="c-tag"
+                            style="color: #ff9900; border-color: #ff990040"
+                            >рок-культура</span
+                        >
+                    </div>
+                    <button
+                        class="read-btn"
+                        onclick="
+                            event.stopPropagation();
+                            openModal('rockstar');
+                        "
+                        style="
+                            background: linear-gradient(
+                                90deg,
+                                #2a1a00,
+                                #1a0d00
+                            );
+                            color: #ffd700;
+                        "
+                    >
+                        Читать историю &#8594;
+                    </button>
+                </div>
+            </div>
+
+            <!-- BURN -->
+            <div
+                class="card"
+                data-id="burn"
+                data-tags="classic"
+                onclick="openModal('burn')"
+            >
+                <div
+                    class="c-head"
+                    style="
+                        background: linear-gradient(135deg, #2d0000, #1a0000);
+                    "
+                >
+                    <div class="can-img-wrap">
+                        <img
+                            src="images/burn-removebg-preview.png"
+                            alt="Burn"
+                            class="can-img"
+                            onerror="
+                                this.parentElement.innerHTML =
+                                    '<span class=c-emoji>🔥</span>'
+                            "
+                        />
+                    </div>
+                    <div class="c-name">Burn</div>
+                    <div class="c-brand">Coca-Cola HBC / Monster Beverage</div>
+                    <div class="c-meta">
+                        <span class="c-badge">Бельгия</span
+                        ><span class="c-badge">с 1994 г.</span
+                        ><span class="c-badge">500 мл</span>
+                    </div>
+                </div>
+                <div class="c-body">
+                    <div class="s-label">КБЖУ на 1 банку</div>
+                    <div class="kbzhu">
+                        <div class="kc">
+                            <div class="kc-val">220</div>
+                            <div class="kc-name">ккал</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">белки</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">жиры</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">55г</div>
+                            <div class="kc-name">углев.</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-icon">☕</span
+                            ><span class="stat-val" style="color: #ff3300"
+                                >160 мг</span
+                            ><span class="stat-lbl">кофеин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">⚗️</span
+                            ><span class="stat-val" style="color: #ff3300"
+                                >1200 мг</span
+                            ><span class="stat-lbl">таурин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">🍬</span
+                            ><span class="stat-val">54г</span
+                            ><span class="stat-lbl">сахар</span>
+                        </div>
+                    </div>
+                    <div class="card-tags">
+                        <span
+                            class="c-tag"
+                            style="color: #ff3300; border-color: #ff330040"
+                            >классика</span
+                        >
+                        <span
+                            class="c-tag"
+                            style="color: #ff8800; border-color: #ff880040"
+                            >Европа</span
+                        >
+                    </div>
+                    <button
+                        class="read-btn"
+                        onclick="
+                            event.stopPropagation();
+                            openModal('burn');
+                        "
+                        style="
+                            background: linear-gradient(
+                                90deg,
+                                #2d0000,
+                                #550000
+                            );
+                            color: #ff3300;
+                        "
+                    >
+                        Читать историю →
+                    </button>
+                </div>
+            </div>
+
+            <!-- NOS -->
+            <div
+                class="card"
+                data-id="nos"
+                data-tags="classic high-caffeine"
+                onclick="openModal('nos')"
+            >
+                <div
+                    class="c-head"
+                    style="
+                        background: linear-gradient(135deg, #001a2e, #00101a);
+                    "
+                >
+                    <div class="can-img-wrap">
+                        <img
+                            src="images/nos-removebg-preview.png"
+                            alt="NOS"
+                            class="can-img"
+                            onerror="
+                                this.parentElement.innerHTML =
+                                    '<span class=c-emoji>⚡</span>'
+                            "
+                        />
+                    </div>
+                    <div class="c-name">NOS Energy</div>
+                    <div class="c-brand">Monster Beverage Corporation</div>
+                    <div class="c-meta">
+                        <span class="c-badge">США</span
+                        ><span class="c-badge">с 2005 г.</span
+                        ><span class="c-badge">473 мл</span>
+                    </div>
+                </div>
+                <div class="c-body">
+                    <div class="s-label">КБЖУ на 1 банку</div>
+                    <div class="kbzhu">
+                        <div class="kc">
+                            <div class="kc-val">210</div>
+                            <div class="kc-name">ккал</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">белки</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">жиры</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">54г</div>
+                            <div class="kc-name">углев.</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-icon">☕</span
+                            ><span class="stat-val" style="color: #00aaff"
+                                >160 мг</span
+                            ><span class="stat-lbl">кофеин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">⚗️</span
+                            ><span class="stat-val" style="color: #00aaff"
+                                >2000 мг</span
+                            ><span class="stat-lbl">таурин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">🍬</span
+                            ><span class="stat-val">54г</span
+                            ><span class="stat-lbl">сахар</span>
+                        </div>
+                    </div>
+                    <div class="card-tags">
+                        <span
+                            class="c-tag"
+                            style="color: #00aaff; border-color: #00aaff40"
+                            >классика</span
+                        >
+                        <span
+                            class="c-tag"
+                            style="color: #ff4444; border-color: #ff444440"
+                            >высокий кофеин</span
+                        >
+                    </div>
+                    <button
+                        class="read-btn"
+                        onclick="
+                            event.stopPropagation();
+                            openModal('nos');
+                        "
+                        style="
+                            background: linear-gradient(
+                                90deg,
+                                #001a2e,
+                                #003366
+                            );
+                            color: #00aaff;
+                        "
+                    >
+                        Читать историю →
+                    </button>
+                </div>
+            </div>
+
+            <!-- CELSIUS -->
+            <div
+                class="card"
+                data-id="celsius"
+                data-tags="fitness sugar-free high-caffeine"
+                onclick="openModal('celsius')"
+            >
+                <div
+                    class="c-head"
+                    style="
+                        background: linear-gradient(135deg, #001a3a, #000d20);
+                    "
+                >
+                    <div class="can-img-wrap">
+                        <img
+                            src="images/Celsius_Live_Fit_Can-removebg-preview.png"
+                            alt="Celsius"
+                            class="can-img"
+                            onerror="
+                                this.parentElement.innerHTML =
+                                    '<span class=c-emoji>🌡️</span>'
+                            "
+                        />
+                    </div>
+                    <div class="c-name">Celsius</div>
+                    <div class="c-brand">Celsius Holdings</div>
+                    <div class="c-meta">
+                        <span class="c-badge">США</span
+                        ><span class="c-badge">с 2004 г.</span
+                        ><span class="c-badge">355 мл</span>
+                    </div>
+                </div>
+                <div class="c-body">
+                    <div class="s-label">КБЖУ на 1 банку</div>
+                    <div class="kbzhu">
+                        <div class="kc">
+                            <div class="kc-val">10</div>
+                            <div class="kc-name">ккал</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">белки</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">жиры</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">2г</div>
+                            <div class="kc-name">углев.</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-icon">☕</span
+                            ><span class="stat-val" style="color: #ff6600"
+                                >200 мг</span
+                            ><span class="stat-lbl">кофеин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">⚗️</span
+                            ><span class="stat-val" style="color: #ff6600"
+                                >0 мг</span
+                            ><span class="stat-lbl">таурин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">🍬</span
+                            ><span class="stat-val">0г</span
+                            ><span class="stat-lbl">сахар</span>
+                        </div>
+                    </div>
+                    <div class="card-tags">
+                        <span
+                            class="c-tag"
+                            style="color: #ff6600; border-color: #ff660040"
+                            >фитнес</span
+                        >
+                        <span
+                            class="c-tag"
+                            style="color: #44ddff; border-color: #44ddff40"
+                            >без сахара</span
+                        >
+                        <span
+                            class="c-tag"
+                            style="color: #ff4444; border-color: #ff444440"
+                            >200 мг кофеина</span
+                        >
+                    </div>
+                    <button
+                        class="read-btn"
+                        onclick="
+                            event.stopPropagation();
+                            openModal('celsius');
+                        "
+                        style="
+                            background: linear-gradient(
+                                90deg,
+                                #001a3a,
+                                #003380
+                            );
+                            color: #ff6600;
+                        "
+                    >
+                        Читать историю →
+                    </button>
+                </div>
+            </div>
+
+            <!-- GORILLA -->
+            <div
+                class="card"
+                data-id="gorilla"
+                data-tags="classic russia"
+                onclick="openModal('gorilla')"
+            >
+                <div
+                    class="c-head"
+                    style="
+                        background: linear-gradient(135deg, #001a00, #002800);
+                    "
+                >
+                    <div class="can-img-wrap">
+                        <img
+                            src="images/gorilla.webp"
+                            alt="Gorilla"
+                            class="can-img"
+                            onerror="
+                                this.parentElement.innerHTML =
+                                    '<span class=c-emoji>🦍</span>'
+                            "
+                        />
+                    </div>
+                    <div class="c-name">Gorilla</div>
+                    <div class="c-brand">Gorilla Energy Company</div>
+                    <div class="c-meta">
+                        <span class="c-badge">Россия</span
+                        ><span class="c-badge">с 2008 г.</span
+                        ><span class="c-badge">500 мл</span>
+                    </div>
+                </div>
+                <div class="c-body">
+                    <div class="s-label">КБЖУ на 1 банку</div>
+                    <div class="kbzhu">
+                        <div class="kc">
+                            <div class="kc-val">225</div>
+                            <div class="kc-name">ккал</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">белки</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">жиры</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">56г</div>
+                            <div class="kc-name">углев.</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-icon">☕</span
+                            ><span class="stat-val" style="color: #44ff00"
+                                >140 мг</span
+                            ><span class="stat-lbl">кофеин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">⚗️</span
+                            ><span class="stat-val" style="color: #44ff00"
+                                >1000 мг</span
+                            ><span class="stat-lbl">таурин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">🍬</span
+                            ><span class="stat-val">55г</span
+                            ><span class="stat-lbl">сахар</span>
+                        </div>
+                    </div>
+                    <div class="card-tags">
+                        <span
+                            class="c-tag"
+                            style="color: #44ff00; border-color: #44ff0040"
+                            >Россия</span
+                        >
+                        <span
+                            class="c-tag"
+                            style="color: #aaffaa; border-color: #aaffaa40"
+                            >классика</span
+                        >
+                    </div>
+                    <button
+                        class="read-btn"
+                        onclick="
+                            event.stopPropagation();
+                            openModal('gorilla');
+                        "
+                        style="
+                            background: linear-gradient(
+                                90deg,
+                                #001a00,
+                                #003300
+                            );
+                            color: #44ff00;
+                        "
+                    >
+                        Читать историю →
+                    </button>
+                </div>
+            </div>
+
+            <!-- ADRENALINE RUSH -->
+            <div
+                class="card"
+                data-id="adrenaline"
+                data-tags="classic russia high-caffeine"
+                onclick="openModal('adrenaline')"
+            >
+                <div
+                    class="c-head"
+                    style="
+                        background: linear-gradient(135deg, #1a1500, #0d0a00);
+                    "
+                >
+                    <div class="can-img-wrap">
+                        <img
+                            src="images/adrenaline.png"
+                            alt="Adrenaline Rush"
+                            class="can-img"
+                            onerror="
+                                this.parentElement.innerHTML =
+                                    '<span class=c-emoji>⚡</span>'
+                            "
+                        />
+                    </div>
+                    <div class="c-name">Adrenaline Rush</div>
+                    <div class="c-brand">PepsiCo / Alcon</div>
+                    <div class="c-meta">
+                        <span class="c-badge">Россия</span
+                        ><span class="c-badge">с 2000 г.</span
+                        ><span class="c-badge">500 мл</span>
+                    </div>
+                </div>
+                <div class="c-body">
+                    <div class="s-label">КБЖУ на 1 банку</div>
+                    <div class="kbzhu">
+                        <div class="kc">
+                            <div class="kc-val">225</div>
+                            <div class="kc-name">ккал</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">белки</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">жиры</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">55г</div>
+                            <div class="kc-name">углев.</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-icon">☕</span
+                            ><span class="stat-val" style="color: #ffd700"
+                                >155 мг</span
+                            ><span class="stat-lbl">кофеин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">⚗️</span
+                            ><span class="stat-val" style="color: #ffd700"
+                                >2000 мг</span
+                            ><span class="stat-lbl">таурин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">🍬</span
+                            ><span class="stat-val">53г</span
+                            ><span class="stat-lbl">сахар</span>
+                        </div>
+                    </div>
+                    <div class="card-tags">
+                        <span
+                            class="c-tag"
+                            style="color: #ffd700; border-color: #ffd70040"
+                            >Россия</span
+                        >
+                        <span
+                            class="c-tag"
+                            style="color: #ff4444; border-color: #ff444440"
+                            >высокий кофеин</span
+                        >
+                    </div>
+                    <button
+                        class="read-btn"
+                        onclick="
+                            event.stopPropagation();
+                            openModal('adrenaline');
+                        "
+                        style="
+                            background: linear-gradient(
+                                90deg,
+                                #1a1500,
+                                #332a00
+                            );
+                            color: #ffd700;
+                        "
+                    >
+                        Читать историю →
+                    </button>
+                </div>
+            </div>
+            <!-- TORNADO -->
+            <div
+                class="card"
+                data-id="tornado"
+                data-tags="classic russia budget"
+                onclick="openModal('tornado')"
+            >
+                <div
+                    class="c-head"
+                    style="
+                        background: linear-gradient(135deg, #1a0000, #2a0505);
+                    "
+                >
+                    <div class="can-img-wrap">
+                        <img
+                            src="images/tornado.png"
+                            alt="Tornado"
+                            class="can-img"
+                            onerror="
+                                this.parentElement.innerHTML =
+                                    '<span class=c-emoji>🌪️</span>'
+                            "
+                        />
+                    </div>
+                    <div class="c-name">Tornado</div>
+                    <div class="c-brand">Tornado Energy</div>
+                    <div class="c-meta">
+                        <span class="c-badge">Россия</span
+                        ><span class="c-badge">с 2011 г.</span
+                        ><span class="c-badge">500 мл</span>
+                    </div>
+                </div>
+                <div class="c-body">
+                    <div class="s-label">КБЖУ на 1 банку</div>
+                    <div class="kbzhu">
+                        <div class="kc">
+                            <div class="kc-val">225</div>
+                            <div class="kc-name">ккал</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">белки</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">0г</div>
+                            <div class="kc-name">жиры</div>
+                        </div>
+                        <div class="kc">
+                            <div class="kc-val">56г</div>
+                            <div class="kc-name">углев.</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="stat-icon">☕</span
+                            ><span class="stat-val" style="color: #ff2200"
+                                >150 мг</span
+                            ><span class="stat-lbl">кофеин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">⚗️</span
+                            ><span class="stat-val" style="color: #ff2200"
+                                >1000 мг</span
+                            ><span class="stat-lbl">таурин</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-icon">🍬</span
+                            ><span class="stat-val">55г</span
+                            ><span class="stat-lbl">сахар</span>
+                        </div>
+                    </div>
+                    <div class="card-tags">
+                        <span
+                            class="c-tag"
+                            style="color: #ff2200; border-color: #ff220040"
+                            >Россия</span
+                        >
+                        <span
+                            class="c-tag"
+                            style="color: #ff8800; border-color: #ff880040"
+                            >бюджет</span
+                        >
+                    </div>
+                    <button
+                        class="read-btn"
+                        onclick="
+                            event.stopPropagation();
+                            openModal('tornado');
+                        "
+                        style="
+                            background: linear-gradient(
+                                90deg,
+                                #1a0000,
+                                #440000
+                            );
+                            color: #ff2200;
+                        "
+                    >
+                        Читать историю →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL OVERLAY -->
+        <div class="overlay" id="overlay" onclick="closeModal(event)">
+            <div class="modal" id="modal">
+                <div class="m-head" id="m-head">
+                    <button class="m-close" onclick="closeModal()">
+                        &#x2715;
+                    </button>
+                    <div class="can-img-wrap" id="m-img-wrap"></div>
+                    <div class="m-title" id="m-title"></div>
+                    <div class="m-brand" id="m-brand"></div>
+                </div>
+                <div class="m-body">
+                    <div class="m-section">История</div>
+                    <div class="history" id="m-history"></div>
+                    <div class="m-section">Интересные факты</div>
+                    <div class="facts" id="m-facts"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Energy Rush &copy; 2026 &nbsp;&middot;&nbsp; developed by
+            chickenzombie &nbsp;&middot;&nbsp; Zed IDE &amp; Claude Sonnet 4.6
+            &nbsp;&#x1F9E1;
+        </footer>
+
+        <script>
+            const drinks = {
+                redbull: {
+                    name: "Red Bull",
+                    brand: "Red Bull GmbH",
+                    img: "images/red_bull.png",
+                    headBg: "linear-gradient(135deg,#003B7A,#001A40)",
+                    history: [
+                        "В 1976 году тайский предприниматель Чалео Ювидья создал энергетический напиток Krating Daeng — «красный бык» по-тайски. Напиток был популярен среди дальнобойщиков и рабочих.",
+                        "В 1982 году австрийский бизнесмен Дитрих Матешиц приехал в Таиланд и обнаружил, что Krating Daeng избавил его от джетлага. Он загорелся идеей вывести напиток на западный рынок.",
+                        "В 1984 году Матешиц и Ювидья основали Red Bull GmbH, вложив по $500 000. Они адаптировали рецепт под европейский вкус: газировали напиток и снизили сладость.",
+                        "1 апреля 1987 года Red Bull официально вышел на рынок Австрии — и с первого дня стал хитом. К 2025 году продано более 100 миллиардов банок по всему миру.",
+                    ],
+                    facts: [
+                        {
+                            icon: "🚀",
+                            text: "В 2012 году Red Bull спонсировал прыжок Феликса Баумгартнера из стратосферы с высоты 39 км. Он разогнался до 1357 км/ч и преодолел звуковой барьер.",
+                        },
+                        {
+                            icon: "🏎️",
+                            text: "Команда Red Bull Racing — одна из самых титулованных в Формуле 1. Макс Ферстаппен выиграл с ней 4 чемпионских титула подряд (2021-2024).",
+                        },
+                        {
+                            icon: "🐂",
+                            text: "Таурин в составе напитка изначально был выделен из бычьей желчи (лат. taurus — бык). Сейчас он производится синтетически.",
+                        },
+                        {
+                            icon: "🌍",
+                            text: "Red Bull продаётся в 171 стране мира. Штаб-квартира компании находится в австрийской деревне Фушль-ам-Зе с населением около 1500 человек.",
+                        },
+                        {
+                            icon: "💛",
+                            text: "Вкусовой концентрат для Red Bull до сих пор производится в Бангкоке и экспортируется по всему миру.",
+                        },
+                    ],
+                    history_en: [
+                        "In 1976, Thai entrepreneur Chaleo Yoovidhya created Krating Daeng — 'red bull' in Thai. The drink was popular among truck drivers and workers throughout Southeast Asia.",
+                        "In 1982, Austrian businessman Dietrich Mateschitz visited Thailand and discovered Krating Daeng cured his jet lag. He became determined to bring the drink to Western markets.",
+                        "In 1984, Mateschitz and Yoovidhya co-founded Red Bull GmbH, each investing $500,000. They adapted the recipe for European tastes — carbonating it and reducing the sweetness.",
+                        "On April 1, 1987, Red Bull officially launched in Austria — and became an instant hit. By 2025, over 100 billion cans have been sold worldwide.",
+                    ],
+                    facts_en: [
+                        {
+                            icon: "🚀",
+                            text: "In 2012, Red Bull sponsored Felix Baumgartner's stratosphere jump from 39 km altitude. He broke the sound barrier reaching 1,357 km/h.",
+                        },
+                        {
+                            icon: "🏎️",
+                            text: "Red Bull Racing is one of the most decorated F1 teams. Max Verstappen won 4 consecutive championship titles with them (2021–2024).",
+                        },
+                        {
+                            icon: "🐂",
+                            text: "Taurine in the drink was originally isolated from ox bile (Latin: taurus = bull). Today it's produced synthetically.",
+                        },
+                        {
+                            icon: "🌍",
+                            text: "Red Bull is sold in 171 countries. The company HQ is in the Austrian village of Fuschl am See, population ~1,500.",
+                        },
+                        {
+                            icon: "💛",
+                            text: "The flavoring concentrate for Red Bull is still produced in Bangkok and exported worldwide.",
+                        },
+                    ],
+                },
+                monster: {
+                    name: "Monster Energy",
+                    brand: "Monster Beverage Corporation",
+                    img: "images/monster-removebg-preview.png",
+                    headBg: "linear-gradient(135deg,#0A1A0A,#001000)",
+                    history: [
+                        "В апреле 2002 года компания Hansen Natural выпустила Monster Energy — новый энергетик с объёмом банки 473 мл (вдвое больше Red Bull) и агрессивным маркетингом. Цель — молодёжь и экстремальный спорт.",
+                        "Логотип — три зелёные царапины, имитирующие след когтей монстра, прорывающего банку. Его разработала калифорнийская студия McLean Design.",
+                        "В 2014 году Coca-Cola приобрела долю в 16,7% в Monster Beverage за $2,15 млрд, обеспечив напитку глобальную дистрибуцию.",
+                        "К 2026 году Monster предлагает более 300 разных вкусов по всему миру: от классики до кофейных, алкогольных и безалкогольных линеек.",
+                    ],
+                    facts: [
+                        {
+                            icon: "🟢",
+                            text: "Monster — второй по популярности энергетик в мире с долей рынка США 30,1% в 2022 году. Уступает только Red Bull.",
+                        },
+                        {
+                            icon: "⚖️",
+                            text: "Monster Beverage подала более 1000 исков о защите торговой марки — против всех, кто использует слово «monster» или букву M. Даже против Покемонов и Monster Hunter в Японии.",
+                        },
+                        {
+                            icon: "🎮",
+                            text: "Monster Energy появляется как продакт-плейсмент в игре Death Stranding (2019) — банки восстанавливают выносливость главному герою.",
+                        },
+                        {
+                            icon: "🏍️",
+                            text: "Monster — титульный спонсор Yamaha в MotoGP с 2019 года и спонсирует таких гонщиков, как Валентино Росси и Франческо Баньяя.",
+                        },
+                        {
+                            icon: "🍺",
+                            text: "В 2023 году Monster запустил алкогольную линейку Beast Unleashed с 6% ABV — без кофеина, но с брутальным вкусом.",
+                        },
+                    ],
+                    history_en: [
+                        "In April 2002, Hansen Natural launched Monster Energy — a new energy drink in a 473ml can (twice the size of Red Bull) with aggressive marketing aimed at youth and extreme sports.",
+                        "The logo — three green claw marks tearing through the can — was designed by California-based McLean Design studio.",
+                        "In 2014, Coca-Cola acquired a 16.7% stake in Monster Beverage for $2.15 billion, providing the drink with global distribution.",
+                        "By 2026, Monster offers over 300 different flavors worldwide: from classic to coffee, alcoholic and non-alcoholic lines.",
+                    ],
+                    facts_en: [
+                        {
+                            icon: "🟢",
+                            text: "Monster is the second most popular energy drink globally with a 30.1% US market share in 2022. Second only to Red Bull.",
+                        },
+                        {
+                            icon: "⚖️",
+                            text: "Monster Beverage has filed over 1,000 trademark lawsuits — against anyone using the word 'monster' or letter M. Even against Pokémon and Monster Hunter in Japan.",
+                        },
+                        {
+                            icon: "🎮",
+                            text: "Monster Energy appears as product placement in the game Death Stranding (2019) — cans restore the main character's stamina.",
+                        },
+                        {
+                            icon: "🏍️",
+                            text: "Monster is the title sponsor of Yamaha in MotoGP since 2019, sponsoring riders like Valentino Rossi and Francesco Bagnaia.",
+                        },
+                        {
+                            icon: "🍺",
+                            text: "In 2023, Monster launched the alcoholic Beast Unleashed line with 6% ABV — caffeine-free but with a bold flavor.",
+                        },
+                    ],
+                },
+                rockstar: {
+                    name: "Rockstar Energy",
+                    brand: "Rockstar Inc. / PepsiCo",
+                    img: "images/rockstar.png",
+                    headBg: "linear-gradient(135deg,#1A1000,#0D0800)",
+                    history: [
+                        "В 2001 году Рассел Вайнер основал Rockstar Energy в Лас-Вегасе. Главная идея — банка 473 мл по той же цене, что и 250 мл Red Bull. Слоган: «Вдвое больше за те же деньги».",
+                        "К 2007 году Rockstar вошёл в тройку крупнейших энергетиков Северной Америки, продавался в 20+ странах и занимал 14% рынка США в 2008 году.",
+                        "В 2009 году Rockstar сменил дистрибьютора с Coca-Cola на PepsiCo. А в 2020 году PepsiCo полностью выкупил бренд за $3,85 млрд.",
+                        "В 2025 году американские и канадские права на Rockstar перешли к Celsius Holdings. При этом PepsiCo сохранил международные права и продолжает дистрибуцию.",
+                    ],
+                    facts: [
+                        {
+                            icon: "⭐",
+                            text: "Название и логотип со звездой отсылают к рок-культуре и образу жизни суперзвезды — энергетик создавался для тех, кто «живёт на полную».",
+                        },
+                        {
+                            icon: "💰",
+                            text: "PepsiCo купил Rockstar в 2020 году за $3,85 млрд — одна из крупнейших сделок на рынке энергетиков в истории.",
+                        },
+                        {
+                            icon: "🎸",
+                            text: "Основатель Рассел Вайнер — сын правоконсервативного радиоведущего Майкла Сэвиджа. В 2009 году против бренда была объявлена бойкот-кампания от ЛГБТК+-активистов.",
+                        },
+                        {
+                            icon: "🥤",
+                            text: "Rockstar одним из первых ввёл в энергетики гуарану, женьшень и расторопшу — «функциональные» ингредиенты, ставшие стандартом индустрии.",
+                        },
+                        {
+                            icon: "🌎",
+                            text: "Бренд занимает третье место в мире по доле рынка энергетиков — около 10% в 2020 году.",
+                        },
+                    ],
+                    history_en: [
+                        "In 2001, Russell Weiner founded Rockstar Energy in Las Vegas. The main idea: a 473ml can at the same price as Red Bull's 250ml. Slogan: 'Twice the size for the same price.'",
+                        "By 2007, Rockstar entered the top three North American energy drinks, available in 20+ countries with 14% of the US market in 2008.",
+                        "In 2009, Rockstar switched distributors from Coca-Cola to PepsiCo. In 2020, PepsiCo acquired the brand outright for $3.85 billion.",
+                        "In 2025, US and Canadian rights to Rockstar passed to Celsius Holdings, while PepsiCo retained international rights and continues distribution.",
+                    ],
+                    facts_en: [
+                        {
+                            icon: "⭐",
+                            text: "The name and star logo reference rock culture and a superstar lifestyle — the drink was created for those who 'live to the fullest.'",
+                        },
+                        {
+                            icon: "💰",
+                            text: "PepsiCo bought Rockstar in 2020 for $3.85 billion — one of the largest deals in energy drink history.",
+                        },
+                        {
+                            icon: "🎸",
+                            text: "Founder Russell Weiner is the son of conservative radio host Michael Savage. In 2009, an LGBTQ+ boycott campaign was launched against the brand.",
+                        },
+                        {
+                            icon: "🥤",
+                            text: "Rockstar was among the first to add guarana, ginseng and milk thistle to energy drinks — 'functional' ingredients that became industry standard.",
+                        },
+                        {
+                            icon: "🌎",
+                            text: "The brand holds third place globally in energy drink market share — approximately 10% in 2020.",
+                        },
+                    ],
+                },
+                burn: {
+                    name: "Burn",
+                    brand: "Coca-Cola HBC / Monster Beverage",
+                    img: "images/burn-removebg-preview.png",
+                    headBg: "linear-gradient(135deg,#2D0000,#1A0000)",
+                    history: [
+                        "Burn появился в 1994 году в Европе как ответ Coca-Cola на растущий рынок энергетиков. Напиток был создан специально для ночных клубов и молодёжной аудитории — агрессивный дизайн и тёмно-красная гамма подчёркивали это.",
+                        "В начале 2000-х Burn стал одним из самых популярных энергетиков в Европе и России, конкурируя напрямую с Red Bull и Monster. Coca-Cola активно продвигала его через музыкальные события и клубную культуру.",
+                        "После того как Coca-Cola приобрела долю в Monster Beverage в 2014 году, продвижение Burn постепенно сократилось — компания сосредоточилась на Monster как основном энергетическом бренде.",
+                        "Сегодня Burn сохраняет присутствие в ряде европейских и постсоветских стран, особенно в России и странах СНГ, где у него накопилась лояльная аудитория.",
+                    ],
+                    facts: [
+                        {
+                            icon: "🎵",
+                            text: "Burn изначально позиционировался как напиток для ночных клубов и был представлен именно в клубной среде Европы — до того как энергетики стали мейнстримом.",
+                        },
+                        {
+                            icon: "🍾",
+                            text: "В России Burn долгое время был символом клубной культуры 2000-х. Его тёмно-красный дизайн и огненный логотип стали узнаваемы среди молодёжи.",
+                        },
+                        {
+                            icon: "🤝",
+                            text: "После сделки Coca-Cola и Monster Beverage в 2014 году оба бренда формально оказались под одним зонтиком — хотя конкурировали друг с другом годами.",
+                        },
+                        {
+                            icon: "🌍",
+                            text: "Burn продаётся более чем в 30 странах мира, хотя его доля рынка значительно снизилась после 2015 года.",
+                        },
+                        {
+                            icon: "🔥",
+                            text: "Название Burn (гореть) и дизайн в огненных тонах были выбраны чтобы передать идею энергии, страсти и интенсивности.",
+                        },
+                    ],
+                    history_en: [
+                        "Burn appeared in Europe in 1994 as Coca-Cola's response to the growing energy drink market. The drink was designed specifically for nightclubs and young audiences — its aggressive design and dark red palette emphasized this.",
+                        "In the early 2000s, Burn became one of the most popular energy drinks in Europe and Russia, competing directly with Red Bull and Monster. Coca-Cola promoted it heavily through music events and club culture.",
+                        "After Coca-Cola acquired a stake in Monster Beverage in 2014, Burn's promotion gradually declined — the company focused on Monster as its primary energy brand.",
+                        "Today Burn maintains presence in several European and post-Soviet countries, particularly in Russia and CIS, where it has built a loyal audience.",
+                    ],
+                    facts_en: [
+                        {
+                            icon: "🎵",
+                            text: "Burn was originally positioned as a nightclub drink and launched specifically in the European club scene — before energy drinks went mainstream.",
+                        },
+                        {
+                            icon: "🍾",
+                            text: "In Russia, Burn was long a symbol of 2000s club culture. Its dark red design and fiery logo became recognizable among youth.",
+                        },
+                        {
+                            icon: "🤝",
+                            text: "After the Coca-Cola and Monster Beverage deal in 2014, both brands formally ended up under the same umbrella — despite competing for years.",
+                        },
+                        {
+                            icon: "🌍",
+                            text: "Burn is sold in over 30 countries, though its market share has significantly declined since 2015.",
+                        },
+                        {
+                            icon: "🔥",
+                            text: "The name Burn and fiery design were chosen to convey the idea of energy, passion and intensity.",
+                        },
+                    ],
+                },
+                nos: {
+                    name: "NOS Energy",
+                    brand: "Monster Beverage Corporation",
+                    img: "images/nos-removebg-preview.png",
+                    headBg: "linear-gradient(135deg,#001A2E,#00101A)",
+                    history: [
+                        "NOS Energy был запущен в 2005 году компанией Futura Industries, вдохновлённой культурой уличных гонок и закисью азота (N₂O) — веществом, используемым для форсировки двигателей.",
+                        "Название NOS — аббревиатура от Nitrous Oxide System. Дизайн банки намеренно имитировал форму баллона с закисью азота, которую используют в тюнинге автомобилей.",
+                        "В 2010 году бренд был приобретён Monster Beverage Corporation, что обеспечило ему широкую дистрибуцию по всей территории США.",
+                        "NOS популярен в среде автомобильных энтузиастов и геймеров. Бренд спонсирует соревнования по дрифту, drag-racing и киберспортивные турниры.",
+                    ],
+                    facts: [
+                        {
+                            icon: "🏎️",
+                            text: "Название NOS — отсылка к Nitrous Oxide System, системе впрыска закиси азота, которую используют для резкого увеличения мощности двигателя в уличных гонках.",
+                        },
+                        {
+                            icon: "🎮",
+                            text: "NOS — один из главных спонсоров киберспортивной сцены в США. Бренд активно присутствует на турнирах по Call of Duty, Fortnite и другим дисциплинам.",
+                        },
+                        {
+                            icon: "🔵",
+                            text: "Фирменный синий цвет NOS стал его визитной карточкой — на фоне зелёного Monster и красного Red Bull он сразу выделяется на полке.",
+                        },
+                        {
+                            icon: "⚡",
+                            text: "NOS содержит 160 мг кофеина на банку 473 мл — столько же, сколько Monster. Формула также включает таурин, гуарану и витамины группы B.",
+                        },
+                        {
+                            icon: "🏁",
+                            text: "Дизайн оригинальной банки NOS был вдохновлён реальными баллонами N₂O от компании Holley Performance — легендарного производителя автозапчастей.",
+                        },
+                    ],
+                    history_en: [
+                        "NOS Energy was launched in 2005 by Futura Industries, inspired by street racing culture and nitrous oxide (N₂O) — the substance used to boost car engines.",
+                        "The name NOS stands for Nitrous Oxide System. The can design deliberately mimicked the shape of an N₂O cylinder used in automotive tuning.",
+                        "In 2010, the brand was acquired by Monster Beverage Corporation, which provided wide distribution across the United States.",
+                        "NOS is popular among car enthusiasts and gamers. The brand sponsors drift competitions, drag racing events and esports tournaments.",
+                    ],
+                    facts_en: [
+                        {
+                            icon: "🏎️",
+                            text: "The NOS name references the Nitrous Oxide System — a nitrous injection system used to dramatically boost engine power in street racing.",
+                        },
+                        {
+                            icon: "🎮",
+                            text: "NOS is one of the biggest esports sponsors in the US, actively present at Call of Duty, Fortnite and other competitive gaming tournaments.",
+                        },
+                        {
+                            icon: "🔵",
+                            text: "NOS's signature blue color has become its trademark — it stands out on the shelf against Monster's green and Red Bull's red.",
+                        },
+                        {
+                            icon: "⚡",
+                            text: "NOS contains 160mg of caffeine per 473ml can — same as Monster. The formula also includes taurine, guarana and B vitamins.",
+                        },
+                        {
+                            icon: "🏁",
+                            text: "The original NOS can design was inspired by real N₂O cylinders from Holley Performance — a legendary automotive parts manufacturer.",
+                        },
+                    ],
+                },
+                celsius: {
+                    name: "Celsius",
+                    brand: "Celsius Holdings",
+                    img: "images/Celsius_Live_Fit_Can-removebg-preview.png",
+                    headBg: "linear-gradient(135deg,#001A3A,#000D20)",
+                    history: [
+                        "Celsius был основан в 2004 году во Флориде с принципиально иной концепцией: это не просто энергетик, а функциональный напиток для фитнеса, ускоряющий метаболизм и сжигание калорий.",
+                        "В отличие от конкурентов, Celsius делал ставку на науку — компания финансировала клинические исследования, подтвердившие, что напиток ускоряет метаболизм на 12% в течение часа после употребления.",
+                        "Прорыв случился в 2020–2022 годах, когда Celsius стал вирусным в TikTok и Instagram. Продажи взлетели на сотни процентов — бренд стал символом ЗОЖ-культуры.",
+                        "В 2022 году PepsiCo инвестировала $550 млн в Celsius и стала эксклюзивным дистрибьютором в США. В 2025 году Celsius также приобрёл права на Rockstar в США и Канаде.",
+                    ],
+                    facts: [
+                        {
+                            icon: "🔬",
+                            text: "Celsius — один из немногих энергетиков, прошедших клинические исследования. 6 независимых исследований подтвердили ускорение метаболизма и сжигание жира при употреблении.",
+                        },
+                        {
+                            icon: "📱",
+                            text: "Бренд стал вирусным в TikTok в 2021-2022 годах без масштабной рекламной кампании. Пользователи сами делились видео о тренировках с Celsius.",
+                        },
+                        {
+                            icon: "0️⃣",
+                            text: "Celsius содержит 0 сахара, 0 искусственных красителей и 0 консервантов. Вместо сахара — стевия и сукралоза. Калорийность — всего 10 ккал на банку.",
+                        },
+                        {
+                            icon: "💊",
+                            text: "Формула MetaPlus содержит зелёный чай, гуарану, имбирь и хром — ингредиенты, научно связанные с ускорением метаболизма и снижением веса.",
+                        },
+                        {
+                            icon: "💰",
+                            text: "Инвестиция PepsiCo в $550 млн в 2022 году — одна из крупнейших в истории рынка энергетиков. За несколько лет Celsius вошёл в тройку лидеров рынка США.",
+                        },
+                    ],
+                    history_en: [
+                        "Celsius was founded in 2004 in Florida with a fundamentally different concept: not just an energy drink, but a functional fitness beverage that accelerates metabolism and calorie burning.",
+                        "Unlike competitors, Celsius bet on science — the company funded clinical studies confirming the drink accelerates metabolism by 12% within an hour of consumption.",
+                        "The breakthrough came in 2020–2022 when Celsius went viral on TikTok and Instagram. Sales skyrocketed — the brand became a symbol of health and fitness culture.",
+                        "In 2022, PepsiCo invested $550 million in Celsius and became the exclusive US distributor. In 2025, Celsius also acquired Rockstar rights in the US and Canada.",
+                    ],
+                    facts_en: [
+                        {
+                            icon: "🔬",
+                            text: "Celsius is one of the few energy drinks with clinical studies. 6 independent studies confirmed metabolic acceleration and fat burning upon consumption.",
+                        },
+                        {
+                            icon: "📱",
+                            text: "The brand went viral on TikTok in 2021–2022 without a large-scale ad campaign. Users organically shared workout videos featuring Celsius.",
+                        },
+                        {
+                            icon: "0️⃣",
+                            text: "Celsius contains 0 sugar, 0 artificial colors and 0 preservatives. Sweetened with stevia and sucralose. Just 10 calories per can.",
+                        },
+                        {
+                            icon: "💊",
+                            text: "The MetaPlus formula contains green tea, guarana, ginger and chromium — ingredients scientifically linked to metabolism acceleration and weight loss.",
+                        },
+                        {
+                            icon: "💰",
+                            text: "PepsiCo's $550M investment in 2022 was one of the largest in energy drink history. Celsius entered the US top 3 within just a few years.",
+                        },
+                    ],
+                },
+                gorilla: {
+                    name: "Gorilla",
+                    brand: "Gorilla Energy Company",
+                    img: "images/gorilla.webp",
+                    headBg: "linear-gradient(135deg,#001A00,#002800)",
+                    history: [
+                        "Горилла — один из первых российских энергетических напитков, запущенный в 2008 году. Бренд создавался как доступная альтернатива западным энергетикам с учётом вкусовых предпочтений российской аудитории.",
+                        "Агрессивный маркетинг с использованием образа гориллы и слогана о мощи и силе быстро сделал напиток узнаваемым. Горилла активно спонсировала спортивные события, фестивали и киберспорт в России.",
+                        "В 2010-е годы Горилла расширила линейку: появились версии без сахара, с различными вкусами и в разных форматах банок. Это позволило охватить более широкую аудиторию.",
+                        "Сегодня Горилла — один из лидеров российского рынка энергетиков. После 2022 года, когда западные бренды сократили присутствие в России, позиции российских производителей значительно укрепились.",
+                    ],
+                    facts: [
+                        {
+                            icon: "🇷🇺",
+                            text: "Горилла — один из немногих российских энергетиков, сумевших конкурировать с западными брендами на домашнем рынке. После 2022 года стал ещё более популярным.",
+                        },
+                        {
+                            icon: "🎮",
+                            text: "Горилла активно спонсирует российскую киберспортивную сцену — турниры по CS2, Dota 2 и другим дисциплинам. Бренд хорошо известен среди геймеров.",
+                        },
+                        {
+                            icon: "🦍",
+                            text: "Логотип с гориллой был выбран как символ грубой физической силы и мощи — качества, которые бренд хочет ассоциировать со своим продуктом.",
+                        },
+                        {
+                            icon: "💚",
+                            text: "Горилла выпускает более 10 вкусовых вариантов, включая тропические, цитрусовые и ягодные. Линейка без сахара пользуется особой популярностью.",
+                        },
+                        {
+                            icon: "🏪",
+                            text: "Горилла представлена практически во всех российских торговых сетях: Пятёрочка, Магнит, ВкусВилл, Лента и других. Доступная цена — одно из ключевых конкурентных преимуществ.",
+                        },
+                    ],
+                    history_en: [
+                        "Gorilla is one of Russia's first energy drinks, launched in 2008. The brand was created as an affordable alternative to Western energy drinks, tailored to Russian consumer tastes.",
+                        "Aggressive marketing using the gorilla image quickly made the drink recognizable. Gorilla actively sponsored sporting events, festivals and esports in Russia.",
+                        "In the 2010s, Gorilla expanded its lineup: sugar-free versions, various flavors and different can formats appeared, allowing the brand to reach a wider audience.",
+                        "Today Gorilla is one of the leaders in the Russian energy drink market. After 2022, when Western brands reduced their presence in Russia, Russian brands gained significant ground.",
+                    ],
+                    facts_en: [
+                        {
+                            icon: "🇷🇺",
+                            text: "Gorilla is one of the few Russian energy drinks that successfully competed with Western brands on home turf. Became even more popular after 2022.",
+                        },
+                        {
+                            icon: "🎮",
+                            text: "Gorilla actively sponsors the Russian esports scene — CS2, Dota 2 and other tournaments. The brand is well-known among gamers.",
+                        },
+                        {
+                            icon: "🦍",
+                            text: "The gorilla logo was chosen as a symbol of raw physical strength — the qualities the brand wants to associate with its product.",
+                        },
+                        {
+                            icon: "💚",
+                            text: "Gorilla offers over 10 flavor variants, including tropical, citrus and berry. The sugar-free line is especially popular.",
+                        },
+                        {
+                            icon: "🏪",
+                            text: "Gorilla is available in virtually every Russian retail chain: Pyaterochka, Magnit, VkusVill, Lenta and others. Affordable price is a key competitive advantage.",
+                        },
+                    ],
+                },
+                adrenaline: {
+                    name: "Adrenaline Rush",
+                    brand: "PepsiCo / Alcon",
+                    img: "images/adrenaline.png",
+                    headBg: "linear-gradient(135deg,#1A1500,#0D0A00)",
+                    history: [
+                        "Адреналин Раш — один из старейших энергетиков на российском рынке, появившийся около 2000 года. Напиток был разработан компанией Alcon и стал одним из пионеров категории энергетиков в России.",
+                        "Характерная чёрно-золотая банка с молнией стала иконой нулевых. Адреналин Раш позиционировался как напиток для тех, кто живёт в ритме мегаполиса — студентов, офисных работников и людей активного образа жизни.",
+                        "Позднее права на бренд перешли к PepsiCo, что обеспечило напитку мощную дистрибуцию по всей России. Формула была несколько раз обновлена, но узнаваемый дизайн остался практически неизменным.",
+                        "Сегодня Адреналин Раш остаётся одним из самых узнаваемых энергетиков в России. Линейка включает классическую версию, вариант без сахара и несколько лимитированных вкусов.",
+                    ],
+                    facts: [
+                        {
+                            icon: "⚡",
+                            text: "Молния на банке — не просто декор, а часть ДНК бренда. Адреналин Раш одним из первых в России использовал концепцию 'мгновенного заряда энергии' в коммуникации.",
+                        },
+                        {
+                            icon: "🇷🇺",
+                            text: "Адреналин Раш — один из немногих российских энергетиков с историей более 20 лет. Многие покупатели помнят его ещё со школы или студенческих лет.",
+                        },
+                        {
+                            icon: "🖤",
+                            text: "Чёрно-золотой дизайн банки был революционным для российского рынка в начале 2000-х. Он транслировал премиальность и статус — необычно для бюджетного сегмента.",
+                        },
+                        {
+                            icon: "💛",
+                            text: "Содержит витамины B3, B6 и B12, а также таурин и кофеин. Формула близка к классическим западным энергетикам, но адаптирована под предпочтения российского рынка.",
+                        },
+                        {
+                            icon: "🏙️",
+                            text: "В нулевые и десятые годы Адреналин Раш активно рекламировался на московском транспорте, билбордах и в студенческих кампусах — став частью городской культуры.",
+                        },
+                    ],
+                    history_en: [
+                        "Adrenaline Rush is one of the oldest energy drinks on the Russian market, appearing around 2000. Developed by Alcon, it was a pioneer of the energy drink category in Russia.",
+                        "The distinctive black-and-gold can with a lightning bolt became an icon of the 2000s. Adrenaline Rush was positioned for those living at the pace of the metropolis — students, office workers and active people.",
+                        "The brand was later acquired by PepsiCo, providing powerful nationwide distribution. The formula was updated several times, but the recognizable design remained virtually unchanged.",
+                        "Today Adrenaline Rush remains one of the most recognizable energy drinks in Russia, with a classic version, sugar-free variant and several limited flavors.",
+                    ],
+                    facts_en: [
+                        {
+                            icon: "⚡",
+                            text: "The lightning bolt on the can isn't just decoration — it's core to the brand's DNA. Adrenaline Rush was among the first in Russia to use the 'instant energy charge' concept.",
+                        },
+                        {
+                            icon: "🇷🇺",
+                            text: "Adrenaline Rush is one of the few Russian energy drinks with over 20 years of history. Many buyers remember it from school or college days.",
+                        },
+                        {
+                            icon: "🖤",
+                            text: "The black-and-gold can design was revolutionary for the Russian market in the early 2000s. It communicated premium and status — unusual for a budget product.",
+                        },
+                        {
+                            icon: "💛",
+                            text: "Contains vitamins B3, B6 and B12, plus taurine and caffeine. The formula is close to classic Western energy drinks but adapted for Russian market preferences.",
+                        },
+                        {
+                            icon: "🏙️",
+                            text: "In the 2000s and 2010s, Adrenaline Rush was actively advertised on Moscow transport, billboards and university campuses — becoming part of urban culture.",
+                        },
+                    ],
+                },
+                tornado: {
+                    name: "Tornado",
+                    brand: "Tornado Energy",
+                    img: "images/tornado.png",
+                    headBg: "linear-gradient(135deg,#1A0000,#2A0505)",
+                    history: [
+                        "Tornado появился на российском рынке в начале 2010-х годов как один из самых доступных энергетических напитков. Бренд с самого начала ориентировался на широкую аудиторию — школьников, студентов и рабочих, которым нужен заряд энергии без удара по кошельку.",
+                        "Агрессивное название и красно-чёрный дизайн с вихрем сразу выделяли Tornado на полке. Напиток позиционировался как мощный и доступный — и это сочетание сработало: за короткое время он занял свою нишу в российских магазинах.",
+                        "В середине 2010-х Tornado активно расширил линейку вкусов: к классическому добавились цитрусовые, ягодные и тропические варианты. Это помогло бренду удержать интерес аудитории и привлечь новых покупателей.",
+                        "После 2022 года, когда западные бренды стали уходить с российского рынка, Tornado укрепил свои позиции. Сегодня он один из самых узнаваемых российских энергетиков в бюджетном сегменте.",
+                    ],
+                    facts: [
+                        {
+                            icon: "💸",
+                            text: "Tornado — один из самых доступных энергетиков в России. Именно цена стала главным конкурентным преимуществом бренда с первого дня на рынке.",
+                        },
+                        {
+                            icon: "🌪️",
+                            text: "Название и логотип с торнадо отражают идею мощного, стремительного заряда энергии. Красно-чёрная гамма усиливает ощущение силы и скорости.",
+                        },
+                        {
+                            icon: "🛒",
+                            text: "Tornado продаётся практически в каждом российском супермаркете и у большинства уличных торговцев. Массовая дистрибуция — ключ к успеху бренда.",
+                        },
+                        {
+                            icon: "🎨",
+                            text: "Линейка Tornado насчитывает более 10 вкусов: от классического до арбузного, вишнёвого и тропического. Новые вкусы выходят регулярно.",
+                        },
+                        {
+                            icon: "🇷🇺",
+                            text: "Tornado — символ российского бюджетного сегмента энергетиков. После ухода части западных брендов его доля на рынке заметно выросла.",
+                        },
+                    ],
+                    history_en: [
+                        "Tornado appeared on the Russian market in the early 2010s as one of the most affordable energy drinks. From day one, the brand targeted a broad audience — students, workers and anyone needing an energy boost without breaking the bank.",
+                        "The aggressive name and red-black design with a whirlwind immediately stood out on the shelf. The drink positioned itself as powerful and affordable — and it worked, quickly carving out its niche in Russian stores.",
+                        "In the mid-2010s, Tornado actively expanded its flavor range: citrus, berry and tropical variants joined the classic. This helped the brand maintain audience interest and attract new buyers.",
+                        "After 2022, when Western brands began leaving the Russian market, Tornado strengthened its position. Today it's one of the most recognizable Russian energy drinks in the budget segment.",
+                    ],
+                    facts_en: [
+                        {
+                            icon: "💸",
+                            text: "Tornado is one of the most affordable energy drinks in Russia. Price was the brand's main competitive advantage from day one on the market.",
+                        },
+                        {
+                            icon: "🌪️",
+                            text: "The tornado name and logo convey the idea of a powerful, swift energy rush. The red-black palette amplifies the feeling of strength and speed.",
+                        },
+                        {
+                            icon: "🛒",
+                            text: "Tornado is sold in virtually every Russian supermarket and most street vendors. Mass distribution is key to the brand's success.",
+                        },
+                        {
+                            icon: "🎨",
+                            text: "The Tornado lineup features over 10 flavors: from classic to watermelon, cherry and tropical. New flavors launch regularly.",
+                        },
+                        {
+                            icon: "🇷🇺",
+                            text: "Tornado is a symbol of the Russian budget energy drink segment. After some Western brands exited, its market share has noticeably grown.",
+                        },
+                    ],
+                },
+            };
+
+            function openModal(id) {
+                const d = drinks[id];
+                if (!d) return;
+
+                document.getElementById("m-head").style.background = d.headBg;
+                document.getElementById("m-img-wrap").innerHTML =
+                    '<img src="' +
+                    d.img +
+                    '" class="can-img" style="max-height:180px" onerror="this.style.display=\'none\'">';
+                document.getElementById("m-title").textContent = d.name;
+                document.getElementById("m-brand").textContent = d.brand;
+
+                const history =
+                    currentLang === "en" && d.history_en
+                        ? d.history_en
+                        : d.history;
+                const facts =
+                    currentLang === "en" && d.facts_en ? d.facts_en : d.facts;
+
+                document.getElementById("m-history").innerHTML = history
+                    .map((p) => "<p>" + p + "</p>")
+                    .join("");
+
+                document.getElementById("m-facts").innerHTML = facts
+                    .map(
+                        (f) =>
+                            '<div class="fact"><span class="fact-icon">' +
+                            f.icon +
+                            "</span><span>" +
+                            f.text +
+                            "</span></div>",
+                    )
+                    .join("");
+
+                document.getElementById("overlay").classList.add("open");
+                document.body.style.overflow = "hidden";
+                // update modal section labels for current lang
+                const t = translations[currentLang];
+                const sections = document.querySelectorAll("#modal .m-section");
+                if (sections[0]) sections[0].textContent = t.modalHistory;
+                if (sections[1]) sections[1].textContent = t.modalFacts;
+            }
+
+            function closeModal(e) {
+                if (e && e.target !== document.getElementById("overlay"))
+                    return;
+                document.getElementById("overlay").classList.remove("open");
+                document.body.style.overflow = "";
+            }
+
+            document.addEventListener("keydown", (e) => {
+                if (e.key === "Escape") closeModal();
+            });
+
+            // Search
+            document
+                .getElementById("searchInput")
+                .addEventListener("input", function () {
+                    filterCards();
+                });
+
+            // Filter buttons
+            document.querySelectorAll(".f-btn").forEach((btn) => {
+                btn.addEventListener("click", function () {
+                    document
+                        .querySelectorAll(".f-btn")
+                        .forEach((b) => b.classList.remove("active"));
+                    this.classList.add("active");
+                    filterCards();
+                });
+            });
+
+            function filterCards() {
+                const query = document
+                    .getElementById("searchInput")
+                    .value.toLowerCase()
+                    .trim();
+                const activeFilter =
+                    document.querySelector(".f-btn.active").dataset.filter;
+
+                document.querySelectorAll(".card").forEach((card) => {
+                    const name = card
+                        .querySelector(".c-name")
+                        .textContent.toLowerCase();
+                    const brand = card
+                        .querySelector(".c-brand")
+                        .textContent.toLowerCase();
+                    const tags = card.dataset.tags || "";
+
+                    const matchSearch =
+                        !query || name.includes(query) || brand.includes(query);
+                    const matchFilter =
+                        activeFilter === "all" || tags.includes(activeFilter);
+
+                    card.classList.toggle(
+                        "hidden",
+                        !(matchSearch && matchFilter),
+                    );
+                });
+
+                const anyVisible = [...document.querySelectorAll(".card")].some(
+                    (c) => !c.classList.contains("hidden"),
+                );
+                let noRes = document.getElementById("no-results");
+                if (!anyVisible) {
+                    if (!noRes) {
+                        noRes = document.createElement("div");
+                        noRes.id = "no-results";
+                        noRes.className = "no-results";
+                        noRes.textContent = translations[currentLang].noResults;
+                        document.getElementById("cardsGrid").appendChild(noRes);
+                    }
+                } else if (noRes) {
+                    noRes.remove();
+                }
+            }
+            window.addEventListener("scroll", function () {
+                const btn = document.getElementById("toTop");
+                btn.classList.toggle(
+                    "visible",
+                    window.scrollY > document.documentElement.scrollHeight / 3,
+                );
+            });
+
+            const translations = {
+                ru: {
+                    subtitle: "Коллекция лучших энергетиков мира",
+                    searchPlaceholder: "🔍 Поиск энергетика...",
+                    filterAll: "Все",
+                    filterClassic: "Классика",
+                    filterHighCaffeine: "Высокий кофеин",
+                    filterFitness: "Фитнес",
+                    filterRussia: "Россия",
+                    filterBudget: "Бюджет",
+                    readBtn: "Читать историю →",
+                    modalHistory: "История",
+                    modalFacts: "Интересные факты",
+                    noResults: "Ничего не найдено 😔",
+                    kcal: "ккал",
+                    protein: "белки",
+                    fat: "жиры",
+                    carbs: "углев.",
+                    caffeine: "кофеин",
+                    taurine: "таурин",
+                    sugar: "сахар",
+                    nutritionLabel: "КБЖУ на 1 банку",
+                    toTopTitle: "Наверх",
+                },
+                en: {
+                    subtitle: "The world's best energy drinks",
+                    searchPlaceholder: "🔍 Search energy drink...",
+                    filterAll: "All",
+                    filterClassic: "Classic",
+                    filterHighCaffeine: "High Caffeine",
+                    filterFitness: "Fitness",
+                    filterRussia: "Russia",
+                    filterBudget: "Budget",
+                    readBtn: "Read the story →",
+                    modalHistory: "History",
+                    modalFacts: "Fun Facts",
+                    noResults: "Nothing found 😔",
+                    kcal: "kcal",
+                    protein: "protein",
+                    fat: "fat",
+                    carbs: "carbs",
+                    caffeine: "caffeine",
+                    taurine: "taurine",
+                    sugar: "sugar",
+                    nutritionLabel: "Nutrition per can",
+                    toTopTitle: "Back to top",
+                },
+            };
+
+            let currentLang = "ru";
+
+            function setLang(lang) {
+                currentLang = lang;
+                const t = translations[lang];
+
+                // Header
+                document.querySelector(".subtitle").textContent = t.subtitle;
+                document.getElementById("searchInput").placeholder =
+                    t.searchPlaceholder;
+
+                // Filter buttons
+                document.querySelector('[data-filter="all"]').textContent =
+                    t.filterAll;
+                document.querySelector('[data-filter="classic"]').textContent =
+                    t.filterClassic;
+                document.querySelector(
+                    '[data-filter="high-caffeine"]',
+                ).textContent = t.filterHighCaffeine;
+                document.querySelector('[data-filter="fitness"]').textContent =
+                    t.filterFitness;
+                document.querySelector('[data-filter="russia"]').textContent =
+                    t.filterRussia;
+                document.querySelector('[data-filter="budget"]').textContent =
+                    t.filterBudget;
+
+                // Read buttons
+                document
+                    .querySelectorAll(".read-btn")
+                    .forEach((btn) => (btn.textContent = t.readBtn));
+
+                // Nutrition labels
+                document
+                    .querySelectorAll(".s-label")
+                    .forEach((el) => (el.textContent = t.nutritionLabel));
+
+                // kc-name: ккал, белки, жиры, углев.
+                document.querySelectorAll(".kc-name").forEach((el) => {
+                    const map = {
+                        ккал: t.kcal,
+                        kcal: t.kcal,
+                        белки: t.protein,
+                        protein: t.protein,
+                        жиры: t.fat,
+                        fat: t.fat,
+                        "углев.": t.carbs,
+                        carbs: t.carbs,
+                    };
+                    if (map[el.textContent])
+                        el.textContent = map[el.textContent];
+                });
+
+                // stat-lbl: кофеин, таурин, сахар
+                document.querySelectorAll(".stat-lbl").forEach((el) => {
+                    const map = {
+                        кофеин: t.caffeine,
+                        caffeine: t.caffeine,
+                        таурин: t.taurine,
+                        taurine: t.taurine,
+                        сахар: t.sugar,
+                        sugar: t.sugar,
+                    };
+                    if (map[el.textContent])
+                        el.textContent = map[el.textContent];
+                });
+
+                // Back to top
+                document.getElementById("toTop").title = t.toTopTitle;
+
+                // Modal section labels (if open)
+                const mHistory = document.querySelector("#modal .m-section");
+                if (mHistory) {
+                    const sections =
+                        document.querySelectorAll("#modal .m-section");
+                    if (sections[0]) sections[0].textContent = t.modalHistory;
+                    if (sections[1]) sections[1].textContent = t.modalFacts;
+                }
+
+                // No results
+                const noRes = document.getElementById("no-results");
+                if (noRes) noRes.textContent = t.noResults;
+
+                // Card tags
+                const tagMap = {
+                    классика: "classic",
+                    classic: "классика",
+                    "витамины B": "B vitamins",
+                    "B vitamins": "витамины B",
+                    "большой объём": "big can",
+                    "big can": "большой объём",
+                    "рок-культура": "rock culture",
+                    "rock culture": "рок-культура",
+                    Европа: "Europe",
+                    Europe: "Европа",
+                    "высокий кофеин": "high caffeine",
+                    "high caffeine": "высокий кофеин",
+                    фитнес: "fitness",
+                    fitness: "фитнес",
+                    "без сахара": "sugar-free",
+                    "sugar-free": "без сахара",
+                    "200 мг кофеина": "200 mg caffeine",
+                    "200 mg caffeine": "200 мг кофеина",
+                    Россия: "Russia",
+                    Russia: "Россия",
+                    бюджет: "budget",
+                    budget: "бюджет",
+                };
+                document.querySelectorAll(".c-tag").forEach((el) => {
+                    const key = el.textContent.trim();
+                    if (tagMap[key]) el.textContent = tagMap[key];
+                });
+
+                // stat-val и kc-val: единицы мг/г
+                document
+                    .querySelectorAll(".stat-val, .kc-val")
+                    .forEach((el) => {
+                        let text = el.textContent.trim();
+                        if (lang === "en") {
+                            text = text
+                                .replace(/мг/g, "mg")
+                                .replace(/(\d),(\d)/g, "$1.$2")
+                                .replace(/г$/g, "g");
+                        } else {
+                            text = text
+                                .replace(/mg/g, "мг")
+                                .replace(/(\d)\.(\d)/g, "$1,$2")
+                                .replace(/g$/g, "г");
+                        }
+                        el.textContent = text;
+                    });
+
+                // c-badge: country names, г./мл
+                const badgeMap = {
+                    США: "USA",
+                    USA: "США",
+                    Австрия: "Austria",
+                    Austria: "Австрия",
+                    Россия: "Russia",
+                    Russia: "Россия",
+                    Бельгия: "Belgium",
+                    Belgium: "Бельгия",
+                };
+                document.querySelectorAll(".c-badge").forEach((el) => {
+                    const text = el.textContent.trim();
+                    if (badgeMap[text]) {
+                        el.textContent = badgeMap[text];
+                        return;
+                    }
+                    if (lang === "en") {
+                        el.textContent = text
+                            .replace(/^с (\d+) г\.$/, "since $1")
+                            .replace(/мл$/, "ml");
+                    } else {
+                        el.textContent = text
+                            .replace(/^since (\d+)$/, "с $1 г.")
+                            .replace(/ml$/, "мл");
+                    }
+                });
+
+                // Lang buttons active state
+                document
+                    .getElementById("btnRu")
+                    .classList.toggle("active", lang === "ru");
+                document
+                    .getElementById("btnEn")
+                    .classList.toggle("active", lang === "en");
+            }
+        </script>
+        <button
+            class="to-top"
+            id="toTop"
+            title="Наверх"
+            onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
+        >
+            ↑
+        </button>
+    </body>
+</html>
